@@ -1,10 +1,17 @@
 import request from '@/utils/request';
 export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+  const formData = new FormData();
+  if (params) {
+    Object.keys(params).forEach(key => {
+      formData.append(key, params[key]);
+    })
+  }
+  return request('/login', {
     method: 'POST',
-    data: params,
+    requestType: "form",
+    body: formData,
   });
 }
 export async function getFakeCaptcha(mobile) {
-  return request(`/api/login/captcha?mobile=${mobile}`);
+  return request(`/login/captcha?mobile=${mobile}`);
 }
