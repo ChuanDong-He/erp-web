@@ -7,7 +7,6 @@ export default {
     pagination: {},
     selectedUserIds: [],
     userInfoVisible: false,
-    selectedRowKeys: [],
     queryCondition: {
       userId: '',
       userName: '',
@@ -16,13 +15,7 @@ export default {
 
   effects: {
     *queryUserInfo({ payload }, { call, put }) {
-      const options = {
-        data: JSON.stringify(payload),
-      };
-      const response = yield call(
-        options => request.post('/userInfo/queryUserInfos', options),
-        options,
-      );
+      const response = yield call(request.post, '/userInfo/queryUserInfos', { data: payload });
       yield put({
         type: 'dataHandle',
         payload: response,
@@ -34,11 +27,7 @@ export default {
       });
     },
     *deleteUserInfo({ payload }, { call, put, select }) {
-      const options = {
-        data: JSON.stringify(payload),
-        requestType: 'json',
-      };
-      yield call(options => request.post('/userInfo/deleteUserInfo', options), options);
+      yield call(request.post, '/userInfo/deleteUserInfo', { data: payload });
 
       const state = yield select(({ userInfo }) => userInfo);
       yield put({
@@ -67,7 +56,6 @@ export default {
       };
     },
     changeState(state, { newState }) {
-      console.log(newState);
       return { ...state, ...newState };
     },
   },

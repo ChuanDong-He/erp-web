@@ -66,14 +66,14 @@ export default defineConfig({
             {
               path: '/system',
               name: '系统管理',
-              icon: 'crown',
+              icon: 'control',
               //component: './Admin',
               //authority: ['admin'],
               routes: [
                 {
                   path: '/system/user_info',
                   name: '用户信息',
-                  icon: 'smile',
+                  icon: 'user',
                   component: './system/userInfo',
                   //authority: ['user'],
                 },

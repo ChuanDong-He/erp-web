@@ -5,8 +5,9 @@ import styles from './index.less';
 import { connect } from 'umi';
 
 @connect(
-  ({ userInfo, loading }) => ({
+  ({ userInfo, loading, user }) => ({
     ...userInfo,
+    currentUser: user.currentUser,
     loading: loading.effects['userInfo/queryUserInfo'],
   }),
   dispatch => ({
@@ -82,15 +83,20 @@ class App extends React.Component {
       key: 'operate',
       render: (text, record) => (
         <span>
-          <a>修改</a>
-          <Divider type="vertical" />
-          <a>重置密码</a>
-          <Divider type="vertical" />
+          <Button type={'link'} size={'small'}>修改</Button>
+          <Divider type="vertical" style={{margin: 0}} />
+          <Button type={'link'} size={'small'}>重置密码</Button>
+          <Divider type="vertical" style={{margin: 0}} />
           <Popconfirm
             title="确认删除？"
             onConfirm={() => this.deleteUserInfo(this, `${record.userId}`)}
+            disabled={record.userId === this.props.currentUser.userId}
           >
-            <a>删除</a>
+            <Button
+              type={'link'}
+              size={'small'}
+              disabled={record.userId === this.props.currentUser.userId || record.userId === 'admin'}
+            >删除</Button>
           </Popconfirm>
         </span>
       ),
@@ -143,24 +149,18 @@ class App extends React.Component {
   };
 
   render() {
-    const hasSelected = this.props.selectedRowKeys.length > 0;
+    const hasSelected = this.props.selectedUserIds.length > 0;
     const rowSelection = {
-      selectedRowKeys: this.props.selectedRowKeys,
+      selectedRowKeys: this.props.selectedUserIds,
       onChange: (selectedRowKeys, selectedRows) => {
-        const selectedUserIds = [];
-        console.log(selectedRowKeys);
-        selectedRows.forEach(row => {
-          selectedUserIds.push(row.userId);
-        });
+
         this.props.changeState({
-          selectedUserIds: selectedUserIds,
-          selectedRowKeys: selectedRowKeys,
+          selectedUserIds: selectedRowKeys
         });
-        //this.setState({selectedUserIds: selectedUserIds});
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },
       getCheckboxProps: record => ({
-        disabled: record.userId === 'admin', // Column configuration not to be checked
+        disabled: record.userId === 'admin' || record.userId === this.props.currentUser.userId, // Column configuration not to be checked
         name: record.userId,
       }),
     };
@@ -182,14 +182,13 @@ class App extends React.Component {
           pagination={{
             ...this.props.pagination,
             showSizeChanger: true,
-            showTotal: total => {
-              `共${total}条记录`;
-            },
+            showTotal: total => `共 ${total} 条记录`,
           }}
           loading={this.props.loading}
           onChange={this.handleTableChange}
           rowSelection={rowSelection}
           size={'middle'}
+          rowKey={'userId'}
         />
         <Modal
           title="新增用户"
