@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { message } from "antd";
 
 export default {
   namespace: 'userInfo',
@@ -7,6 +8,7 @@ export default {
     pagination: {},
     selectedUserIds: [],
     userInfoVisible: false,
+    rePassWordVisible: false,
     queryCondition: {
       userId: '',
       userName: '',
@@ -27,7 +29,7 @@ export default {
       });
     },
     *deleteUserInfo({ payload }, { call, put, select }) {
-      yield call(request.post, '/userInfo/deleteUserInfo', { data: payload });
+      const response = yield call(request.post, '/userInfo/deleteUserInfo', { data: payload });
 
       const state = yield select(({ userInfo }) => userInfo);
       yield put({
@@ -40,6 +42,7 @@ export default {
           },
         },
       });
+      message.success(response.msg);
     },
   },
 

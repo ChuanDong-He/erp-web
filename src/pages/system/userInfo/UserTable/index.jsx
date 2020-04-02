@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, notification, Button, Divider, Popconfirm, Modal } from 'antd';
+import { Table, notification, Button, Divider, Popconfirm, Modal, Input } from 'antd';
 import styles from './index.less';
 //import EditUserInfo from '../EditUserInfo';
 import { connect } from 'umi';
@@ -85,7 +85,7 @@ class App extends React.Component {
         <span>
           <Button type={'link'} size={'small'}>修改</Button>
           <Divider type="vertical" style={{margin: 0}} />
-          <Button type={'link'} size={'small'}>重置密码</Button>
+          <Button type={'link'} size={'small'} onClick={() => { this.props.changeState({rePassWordVisible: true}) }}>重置密码</Button>
           <Divider type="vertical" style={{margin: 0}} />
           <Popconfirm
             title="确认删除？"
@@ -198,6 +198,16 @@ class App extends React.Component {
           destroyOnClose={true}
         >
           {/*<EditUserInfo />*/}
+        </Modal>
+        <Modal
+          title="密码重置"
+          visible={this.props.rePassWordVisible}
+          onOk={this.handleOk}
+          onCancel={() => { this.props.changeState({rePassWordVisible: false}) }}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
         </Modal>
       </div>
     );

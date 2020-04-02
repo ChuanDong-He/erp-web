@@ -3,7 +3,7 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -32,16 +32,18 @@ const errorHandler = error => {
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     // const { status, url } = response;
-    notification.error({
+    /*notification.error({
       // message: `请求错误 ${status}: ${url}`,
       message: data.msg,
       description: errorText,
-    });
+    });*/
+    message.error(data.msg);
   } else if (!response) {
-    notification.error({
+    /*notification.error({
       description: '您的网络发生异常，无法连接服务器',
       message: '网络异常',
-    });
+    });*/
+    message.error('您的网络发生异常，无法连接服务器');
   }
 
   return response;

@@ -3,6 +3,7 @@ import { history } from 'umi';
 import { fakeAccountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import MD5 from 'crypto-js/md5';
 const Model = {
   namespace: 'login',
   state: {
@@ -10,6 +11,7 @@ const Model = {
   },
   effects: {
     *login({ payload }, { call, put }) {
+      payload.password = MD5(payload.password).toString();
       const response = yield call(fakeAccountLogin, payload);
       yield put({
         type: 'changeLoginStatus',

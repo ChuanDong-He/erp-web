@@ -27,7 +27,6 @@ class SearchUserInfo extends Component {
     this.props.changeState({
       queryCondition: { ...this.state }
     });
-    console.log(this.props.pagination);
     const { pageSize = 10 } = this.props.pagination;
     this.props.queryUserInfo({
       pageSize: pageSize,
