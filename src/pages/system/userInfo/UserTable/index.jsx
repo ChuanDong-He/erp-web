@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, notification, Button, Divider, Popconfirm, Modal, Input } from 'antd';
+import { Table, Button, Divider, Popconfirm, Modal, Input, Form, Row, Col } from 'antd';
 import styles from './index.less';
 //import EditUserInfo from '../EditUserInfo';
 import { connect } from 'umi';
@@ -134,18 +134,14 @@ class App extends React.Component {
     this.setState({ userInfoVisible: true });
   };
 
+  pwdForm = null;
   handleOk = e => {
-    console.log(e);
-    this.setState({
-      userInfoVisible: false,
+    this.pwdForm.validateFields().then(values => {
+      console.log(values);
+    }).catch(error => {
+      console.log(error);
     });
-  };
 
-  handleCancel = e => {
-    console.log(e);
-    this.setState({
-      userInfoVisible: false,
-    });
   };
 
   render() {
@@ -205,9 +201,29 @@ class App extends React.Component {
           onOk={this.handleOk}
           onCancel={() => { this.props.changeState({rePassWordVisible: false}) }}
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <Form layout="vertical" ref={form => this.pwdForm = form}>
+            <Form.Item name={'password'} label={'密码'} rules={[{required: true, message: '请输入密码'}]}>
+              <Input.Password placeholder={'请输入密码'} />
+            </Form.Item>
+            <Form.Item
+              name={'confirm'}
+              label={'确认密码'}
+              rules={[
+                {required: true, message: '请输入密码'},
+                ({ getFieldValue }) => ({
+                  validator(rule, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject('The two passwords that you entered do not match!');
+                  },
+                })
+                ]}
+              dependencies={['password']}
+            >
+              <Input.Password placeholder={'请输入密码'} />
+            </Form.Item>
+          </Form>
         </Modal>
       </div>
     );
