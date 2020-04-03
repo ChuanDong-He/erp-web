@@ -18,19 +18,24 @@ export default {
   effects: {
     *queryUserInfo({ payload }, { call, put }) {
       const response = yield call(request.post, '/userInfo/queryUserInfos', { data: payload });
-      yield put({
-        type: 'dataHandle',
-        payload: response,
-      });
-
+      if (response && response.status) {
+        return;
+      }
       yield put({
         type: 'changeState',
-        newState: { selectedRowKeys: [], selectedUserIds: [] },
+        newState: {
+          selectedRowKeys: [],
+          selectedUserIds: [],
+          data: response.data.list,
+          pagination: response.data.pagination,
+        },
       });
     },
     *deleteUserInfo({ payload }, { call, put, select }) {
       const response = yield call(request.post, '/userInfo/deleteUserInfo', { data: payload });
-
+      if (response && response.status) {
+        return;
+      }
       const state = yield select(({ userInfo }) => userInfo);
       yield put({
         type: 'queryUserInfo',
@@ -44,22 +49,22 @@ export default {
       });
       message.success(response.msg);
     },
+    *resetPassword({ payload }, { call, put }) {
+      const response = yield call(request.post, '/userInfo/resetPassword', { data: payload });
+      if (response && response.status) {
+        return;
+      }
+      yield put({
+        type: 'changeState',
+        newState: { rePassWordVisible: false },
+      });
+      message.success(response.msg);
+    },
   },
 
   reducers: {
-    dataHandle(state, { payload }) {
-      // 异常情况
-      if (payload && payload.status) {
-        return { ...state };
-      }
-      return {
-        ...state,
-        data: payload.data.list,
-        pagination: payload.data.pagination,
-      };
-    },
     changeState(state, { newState }) {
       return { ...state, ...newState };
-    },
+    }
   },
 };

@@ -3,12 +3,14 @@ import { Table, Button, Divider, Popconfirm, Modal, Input, Form, Row, Col } from
 import styles from './index.less';
 //import EditUserInfo from '../EditUserInfo';
 import { connect } from 'umi';
+import MD5 from 'crypto-js/md5';
 
 @connect(
   ({ userInfo, loading, user }) => ({
     ...userInfo,
     currentUser: user.currentUser,
     loading: loading.effects['userInfo/queryUserInfo'],
+    confirmLoading: loading.effects['userInfo/resetPassword'],
   }),
   dispatch => ({
     queryUserInfo: param => {
@@ -26,6 +28,12 @@ import { connect } from 'umi';
     deleteUserInfo: param => {
       dispatch({
         type: 'userInfo/deleteUserInfo',
+        payload: param,
+      });
+    },
+    resetPassword: param => {
+      dispatch({
+        type: 'userInfo/resetPassword',
         payload: param,
       });
     },
@@ -85,7 +93,7 @@ class App extends React.Component {
         <span>
           <Button type={'link'} size={'small'}>修改</Button>
           <Divider type="vertical" style={{margin: 0}} />
-          <Button type={'link'} size={'small'} onClick={() => { this.props.changeState({rePassWordVisible: true}) }}>重置密码</Button>
+          <Button type={'link'} size={'small'} onClick={() => { this.props.changeState({rePassWordVisible: true}); this.rePwdUserId = record.userId }}>重置密码</Button>
           <Divider type="vertical" style={{margin: 0}} />
           <Popconfirm
             title="确认删除？"
@@ -135,11 +143,14 @@ class App extends React.Component {
   };
 
   pwdForm = null;
-  handleOk = e => {
+  rePwdUserId = null;
+  handleOk = () => {
+    console.log(this.rePwdUserId);
     this.pwdForm.validateFields().then(values => {
       console.log(values);
+      this.props.resetPassword({ userId: this.rePwdUserId , password: MD5(values.password).toString() });
     }).catch(error => {
-      console.log(error);
+      //console.log(error);
     });
 
   };
@@ -187,19 +198,12 @@ class App extends React.Component {
           rowKey={'userId'}
         />
         <Modal
-          title="新增用户"
-          visible={this.props.userInfoVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          destroyOnClose={true}
-        >
-          {/*<EditUserInfo />*/}
-        </Modal>
-        <Modal
           title="密码重置"
           visible={this.props.rePassWordVisible}
           onOk={this.handleOk}
           onCancel={() => { this.props.changeState({rePassWordVisible: false}) }}
+          confirmLoading={this.props.confirmLoading}
+          destroyOnClose={true}
         >
           <Form layout="vertical" ref={form => this.pwdForm = form}>
             <Form.Item name={'password'} label={'密码'} rules={[{required: true, message: '请输入密码'}]}>
@@ -215,7 +219,7 @@ class App extends React.Component {
                     if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject('The two passwords that you entered do not match!');
+                    return Promise.reject('两次输入的密码不一致!');
                   },
                 })
                 ]}
