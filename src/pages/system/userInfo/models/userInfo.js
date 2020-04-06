@@ -16,7 +16,7 @@ export default {
   },
 
   effects: {
-    *queryUserInfo({ payload }, { call, put }) {
+    *queryUserInfos({ payload }, { call, put }) {
       const response = yield call(request.post, '/userInfo/queryUserInfos', { data: payload });
       if (response && response.status) {
         return;
@@ -38,7 +38,7 @@ export default {
       }
       const state = yield select(({ userInfo }) => userInfo);
       yield put({
-        type: 'queryUserInfo',
+        type: 'queryUserInfos',
         payload: {
           pageSize: state.pagination.pageSize,
           pageNum: 1,

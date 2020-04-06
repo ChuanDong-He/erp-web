@@ -42,14 +42,18 @@ const errorHandler = error => {
       message: data.msg,
       description: errorText,
     });*/
-    message.error(data.msg);
+    if (response.status >= 500 || response <= 599) {
+      message.error(data.msg);
+    } else {
+      if (response.status === 401) {
+        const queryString = stringify({
+          redirect: window.location.href,
+        });
+        window.location.href = `/user/login?${queryString}`;
+      } else {
+        message.warning(data.msg);
+      }
 
-    if (response.status === 401) {
-      const queryString = stringify({
-        redirect: window.location.href,
-      });
-
-      window.location.href = `/user/login?${queryString}`;
     }
   } else if (!response) {
     /*notification.error({

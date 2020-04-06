@@ -77,6 +77,13 @@ export default defineConfig({
                   component: './system/userInfo',
                   //authority: ['user'],
                 },
+                {
+                  path: '/system/role_info',
+                  name: '角色信息',
+                  icon: 'user',
+                  component: './system/roleInfo',
+                  //authority: ['user'],
+                },
               ],
             },
             {
