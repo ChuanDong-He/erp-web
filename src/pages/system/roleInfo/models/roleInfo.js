@@ -9,6 +9,7 @@ export default {
     selectedRoleIds: [],
     permissionVisible: false,
     menuTreeInfos: [],
+    attrPermissionInfos: [],
     roleMenuPermissionKeys: [],
     queryCondition: {},
   },
@@ -38,6 +39,18 @@ export default {
         type: 'changeState',
         newState: {
           ...response.data
+        },
+      });
+    },
+    *queryRoleAttrPermission({ payload }, { call, put }) {
+      const response = yield call(request.get, `/roleInfo/queryRoleAttrPermission/${payload.roleId}`);
+      if (response && response.status) {
+        return;
+      }
+      yield put({
+        type: 'changeState',
+        newState: {
+          attrPermissionInfos: response.data
         },
       });
     },

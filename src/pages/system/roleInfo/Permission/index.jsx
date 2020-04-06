@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, Tabs, Tree, Spin} from 'antd';
+import {Modal, Tabs, Tree, Spin, Checkbox, Row, Col, Alert } from 'antd';
 import { connect } from 'umi';
 
 @connect(
@@ -29,12 +29,10 @@ class Permission extends React.Component{
   }
 
   okHandle = () => {
-    console.log(this.props.roleId);
     this.props.saveRolePermission({
       roleId: this.props.roleId,
       menuPermission: this.props.roleMenuPermissionKeys,
     });
-    //this.props.changeState({permissionVisible: false});
   };
 
   onCheck = checkedKeys => {
@@ -63,6 +61,30 @@ class Permission extends React.Component{
         />
       );
     }
+    let attrPermission = [];
+    this.props.attrPermissionInfos.forEach(attrPermissionInfo => {
+      let row = [];
+      attrPermissionInfo.attrInfos.forEach(attrInfo => {
+        row.push(
+          <Col span={8}>
+            <Checkbox value='attrInfo.attrId'>{attrInfo.name}</Checkbox>
+          </Col>
+        );
+      });
+      attrPermission.push(
+        <div style={{marginBottom: '8px'}}>
+          <div style={{borderBottom: '1px solid #e9e9e9'}}>
+            <Checkbox indeterminate={true}>{attrPermissionInfo.target}</Checkbox>
+          </div>
+          <Checkbox.Group style={{ width: '100%', marginTop: '5px' }}>
+            <Row>
+              {row}
+            </Row>
+          </Checkbox.Group>
+        </div>
+      )
+    });
+
     return (
       <Modal
         title={'权限配置'}
@@ -77,7 +99,10 @@ class Permission extends React.Component{
           <Tabs.TabPane key={'1'} tab={'菜单配置'} style={{outline: "none"}}>
             {menuPermission}
           </Tabs.TabPane>
-          <Tabs.TabPane key={'2'} tab={'数据配置'} style={{outline: "none"}}>数据配置</Tabs.TabPane>
+          <Tabs.TabPane key={'2'} tab={'数据配置'} style={{outline: "none"}}>
+            <Alert message="选中的为角色无权限查看" type="warning" showIcon style={{marginBottom: '10px'}}/>
+            {attrPermission}
+          </Tabs.TabPane>
           <Tabs.TabPane key={'3'} tab={'功能配置'} style={{outline: "none"}}>功能配置</Tabs.TabPane>
         </Tabs>
       </Modal>

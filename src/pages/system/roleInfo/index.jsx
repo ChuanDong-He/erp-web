@@ -38,6 +38,12 @@ import { connect } from 'umi';
         payload: param
       })
     },
+    queryRoleAttrPermission: param => {
+      dispatch({
+        type: 'roleInfo/queryRoleAttrPermission',
+        payload: param
+      })
+    },
   }),
 )
 class App extends React.Component{
@@ -72,11 +78,12 @@ class App extends React.Component{
       key: 'operate',
       render: (text, record) => (
         <span>
-          <Button type={'link'} size={'small'}>修改</Button>
+          <Button type={'link'} size={'small'} disabled={'ADMIN' === record.roleId}>修改</Button>
           <Divider type="vertical" style={{margin: 0}} />
           <Button
             type={'link'}
             size={'small'}
+            disabled={'ADMIN' === record.roleId}
             onClick={() => this.permissionOperate(record.roleId)}
           >权限</Button>
           <Divider type="vertical" style={{margin: 0}} />
@@ -98,6 +105,7 @@ class App extends React.Component{
   permissionOperate(roleId) {
     this.props.changeState({permissionVisible: true});
     this.props.queryRoleMenuPermission({roleId: roleId});
+    this.props.queryRoleAttrPermission({roleId: roleId});
     this.setState({roleId: roleId});
   }
 
