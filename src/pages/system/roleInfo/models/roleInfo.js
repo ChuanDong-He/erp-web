@@ -12,6 +12,7 @@ export default {
     attrPermissionInfos: [],
     roleMenuPermissionKeys: [],
     queryCondition: {},
+    attrData: {},
   },
 
   effects: {
@@ -47,10 +48,17 @@ export default {
       if (response && response.status) {
         return;
       }
+      const attrData = {};
+      response.data.forEach((item, i) => {
+        attrData['indeterminate_' + i] = !!item.roleAttrPermissionKeys.length && item.roleAttrPermissionKeys.length <item.attrInfos.length;
+        attrData['checkAll_' + i] = item.attrInfos.length === item.roleAttrPermissionKeys.length;
+        attrData['checkedList_' + i] = item.roleAttrPermissionKeys;
+      });
       yield put({
         type: 'changeState',
         newState: {
-          attrPermissionInfos: response.data
+          ...attrData,
+          attrPermissionInfos: response.data,
         },
       });
     },
