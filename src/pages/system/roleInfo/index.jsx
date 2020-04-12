@@ -1,7 +1,7 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import React from 'react';
-import { Table, Button, Divider, Popconfirm, Modal, Input, Form} from 'antd';
+import { Table, Button, Divider, Modal } from 'antd';
 import styles from '@/utils/default.less';
 import Search from './Search';
 import Permission from "./Permission";
@@ -41,6 +41,12 @@ import { connect } from 'umi';
     queryRoleAttrPermission: param => {
       dispatch({
         type: 'roleInfo/queryRoleAttrPermission',
+        payload: param
+      })
+    },
+    queryRoleOperationPermission: param => {
+      dispatch({
+        type: 'roleInfo/queryRoleOperationPermission',
         payload: param
       })
     },
@@ -106,6 +112,7 @@ class App extends React.Component{
     this.props.changeState({permissionVisible: true});
     this.props.queryRoleMenuPermission({roleId: roleId});
     this.props.queryRoleAttrPermission({roleId: roleId});
+    this.props.queryRoleOperationPermission({roleId: roleId});
     this.setState({roleId: roleId});
   }
 

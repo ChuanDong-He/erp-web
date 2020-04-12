@@ -13,6 +13,8 @@ export default {
     roleMenuPermissionKeys: [],
     queryCondition: {},
     attrData: {},
+    operationData: {},
+    operationPermissionInfos: [],
   },
 
   effects: {
@@ -43,6 +45,25 @@ export default {
         },
       });
     },
+    *queryRoleOperationPermission({ payload }, { call, put }) {
+      const response = yield call(request.get, `/roleInfo/queryRoleOperationPermission/${payload.roleId}`);
+      if (response && response.status) {
+        return;
+      }
+      const operationData = {};
+      response.data.forEach((item, i) => {
+        operationData['indeterminate_' + i] = !!item.roleOperationPermissionKeys.length && item.roleOperationPermissionKeys.length <item.operationInfos.length;
+        operationData['checkAll_' + i] = item.operationInfos.length === item.roleOperationPermissionKeys.length;
+        operationData['checkedList_' + i] = item.roleOperationPermissionKeys;
+      });
+      yield put({
+        type: 'changeState',
+        newState: {
+          operationData: operationData,
+          operationPermissionInfos: response.data,
+        },
+      });
+    },
     *queryRoleAttrPermission({ payload }, { call, put }) {
       const response = yield call(request.get, `/roleInfo/queryRoleAttrPermission/${payload.roleId}`);
       if (response && response.status) {
@@ -57,7 +78,7 @@ export default {
       yield put({
         type: 'changeState',
         newState: {
-          ...attrData,
+          attrData: attrData,
           attrPermissionInfos: response.data,
         },
       });

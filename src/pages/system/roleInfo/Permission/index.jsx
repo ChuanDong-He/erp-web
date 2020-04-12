@@ -29,16 +29,21 @@ class Permission extends React.Component{
     super(props);
   }
   okHandle = () => {
-    let attrs = [];
+    const attrs = [];
     this.props.attrPermissionInfos.forEach((item, i) => {
-        attrs = [ ...attrs, ...this.props['checkedList_' + i]];
+      attrs.push(...this.props.attrData['checkedList_' + i]);
     });
-    console.log(attrs);
+
+    const operations = [];
+    this.props.operationPermissionInfos.forEach((item, i) => {
+      operations.push(...this.props.operationData['checkedList_' + i]);
+    });
 
     this.props.saveRolePermission({
       roleId: this.props.roleId,
       menuPermission: this.props.roleMenuPermissionKeys,
       attrs: attrs,
+      operations: operations,
     });
   };
 
@@ -48,27 +53,49 @@ class Permission extends React.Component{
     });
   };
 
-  onCheckAllChange = (e, i) => {
+  onCheckAllChangeAttr = (e, i) => {
     const data = {};
     data['indeterminate_' + i] = false;
     data['checkAll_' + i] = e.target.checked;
-    data['checkedList_' + i] = e.target.checked ? this.groups[i] : [];
+    data['checkedList_' + i] = e.target.checked ? this.attrGroups[i] : [];
     this.props.changeState({
-      ...data
+      attrData: { ...this.props.attrData, ...data }
     });
   };
 
-  onChange = (checkedValues, i) => {
+  onChangeAttr = (checkedValues, i) => {
     const data = {};
     data['checkedList_' + i] = checkedValues;
-    data['indeterminate_' + i] = !!checkedValues.length && checkedValues.length < this.groups[i].length;
-    data['checkAll_' + i] = checkedValues.length === this.groups[i].length;
+    data['indeterminate_' + i] = !!checkedValues.length && checkedValues.length < this.attrGroups[i].length;
+    data['checkAll_' + i] = checkedValues.length === this.attrGroups[i].length;
     this.props.changeState({
-      ...data
+      attrData: { ...this.props.attrData, ...data }
     });
   };
 
-  groups = {};
+  onCheckAllChangeOperation = (e, i) => {
+    const data = {};
+    data['indeterminate_' + i] = false;
+    data['checkAll_' + i] = e.target.checked;
+    data['checkedList_' + i] = e.target.checked ? this.operationGroups[i] : [];
+    this.props.changeState({
+      operationData: { ...this.props.operationData, ...data }
+    });
+  };
+
+  onChangeOperation = (checkedValues, i) => {
+    const data = {};
+    data['checkedList_' + i] = checkedValues;
+    data['indeterminate_' + i] = !!checkedValues.length && checkedValues.length < this.operationGroups[i].length;
+    data['checkAll_' + i] = checkedValues.length === this.operationGroups[i].length;
+    this.props.changeState({
+      operationData: { ...this.props.operationData, ...data }
+    });
+  };
+
+  attrGroups = {};
+
+  operationGroups = {};
 
   render() {
     let menuPermission;
@@ -103,22 +130,59 @@ class Permission extends React.Component{
           </Col>
         );
       });
-      this.groups[i] = group;
+      this.attrGroups[i] = group;
       attrPermission.push(
         <div style={{marginBottom: '8px'}} key={i}>
           <div style={{borderBottom: '1px solid #e9e9e9'}}>
             <Checkbox
-              indeterminate={this.props['indeterminate_' + i]}
-              checked={this.props['checkAll_' + i]}
-              onChange={(e) => this.onCheckAllChange(e, i)}
+              indeterminate={this.props.attrData['indeterminate_' + i]}
+              checked={this.props.attrData['checkAll_' + i]}
+              onChange={(e) => this.onCheckAllChangeAttr(e, i)}
             >
               {attrPermissionInfo.target}
             </Checkbox>
           </div>
           <Checkbox.Group
             style={{ width: '100%', marginTop: '5px' }}
-            onChange={(checkedValues) => this.onChange(checkedValues, i)}
-            value={this.props['checkedList_' + i]}
+            onChange={(checkedValues) => this.onChangeAttr(checkedValues, i)}
+            value={this.props.attrData['checkedList_' + i]}
+          >
+            <Row>
+              {row}
+            </Row>
+          </Checkbox.Group>
+        </div>
+      )
+    });
+
+    let operationPermission = [];
+    this.props.operationPermissionInfos.forEach((operationPermissionInfo, i) => {
+      let row = [];
+      let group = [];
+      operationPermissionInfo.operationInfos.forEach((operationInfo, index) => {
+        group.push(operationInfo.operationId);
+        row.push(
+          <Col span={8} key={index}>
+            <Checkbox value={operationInfo.operationId}>{operationInfo.name}</Checkbox>
+          </Col>
+        );
+      });
+      this.operationGroups[i] = group;
+      operationPermission.push(
+        <div style={{marginBottom: '8px'}} key={i}>
+          <div style={{borderBottom: '1px solid #e9e9e9'}}>
+            <Checkbox
+              indeterminate={this.props.operationData['indeterminate_' + i]}
+              checked={this.props.operationData['checkAll_' + i]}
+              onChange={(e) => this.onCheckAllChangeOperation(e, i)}
+            >
+              {operationPermissionInfo.target}
+            </Checkbox>
+          </div>
+          <Checkbox.Group
+            style={{ width: '100%', marginTop: '5px' }}
+            onChange={(checkedValues) => this.onChangeOperation(checkedValues, i)}
+            value={this.props.operationData['checkedList_' + i]}
           >
             <Row>
               {row}
@@ -144,11 +208,13 @@ class Permission extends React.Component{
           </Tabs.TabPane>
           <Tabs.TabPane key={'2'} tab={'数据配置'} style={{outline: "none"}}>
             <div className={styles.alert}>
-              <Alert message="选中的为角色无权限查看" type="info" showIcon style={{marginBottom: '10px'}} />
+              <Alert message="选中为该角色无权限查看" type="info" showIcon style={{marginBottom: '10px'}} />
             </div>
             {attrPermission}
           </Tabs.TabPane>
-          <Tabs.TabPane key={'3'} tab={'功能配置'} style={{outline: "none"}}>功能配置</Tabs.TabPane>
+          <Tabs.TabPane key={'3'} tab={'功能配置'} style={{outline: "none"}}>
+            {operationPermission}
+          </Tabs.TabPane>
         </Tabs>
       </Modal>
     )
