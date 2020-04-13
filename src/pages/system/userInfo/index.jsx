@@ -1,8 +1,9 @@
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import React from 'react';
-import { Table, Button, Divider, Popconfirm, Modal, Input, Form} from 'antd';
+import { Table, Button, Divider, Modal, Input, Form} from 'antd';
 import styles from '@/utils/default.less';
 import Search from './Search';
+import EditUser from "./EditUser";
 import { connect } from 'umi';
 import MD5 from 'crypto-js/md5';
 import {ExclamationCircleOutlined} from "@ant-design/icons";
@@ -42,6 +43,11 @@ import {ExclamationCircleOutlined} from "@ant-design/icons";
   }),
 )
 class App extends React.Component {
+
+  state = {
+    editUserVisible: false,
+  };
+
   columns = [
     {
       title: '账号',
@@ -148,10 +154,6 @@ class App extends React.Component {
     });
   };
 
-  addUserInfo = () => {
-    this.setState({ userInfoVisible: true });
-  };
-
   pwdForm = null;
   rePwdUserId = null;
   handleOk = () => {
@@ -183,7 +185,7 @@ class App extends React.Component {
         <Search />
         <div>
           <div style={{ marginBottom: 8 }}>
-            <Button type="primary" onClick={this.addUserInfo}>
+            <Button type="primary" onClick={() => { this.setState({editUserVisible: true}) }}>
               新增
             </Button>
             <Button
@@ -240,6 +242,14 @@ class App extends React.Component {
                 <Input.Password placeholder={'请输入密码'} />
               </Form.Item>
             </Form>
+          </Modal>
+          <Modal title={'新增用户'}
+                 visible={this.state.editUserVisible}
+                 destroyOnClose={true}
+                 maskClosable={false}
+                 onCancel={() => { this.setState({editUserVisible: false}) }}
+          >
+            <EditUser />
           </Modal>
         </div>
       </PageHeaderWrapper>
