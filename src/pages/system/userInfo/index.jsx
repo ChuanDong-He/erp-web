@@ -7,6 +7,7 @@ import EditUser from "./EditUser";
 import { connect } from 'umi';
 import MD5 from 'crypto-js/md5';
 import {ExclamationCircleOutlined} from "@ant-design/icons";
+//import router from 'umi/router';
 
 @connect(
   ({ userInfo, loading, user }) => ({
@@ -130,6 +131,53 @@ class App extends React.Component {
     });
   };
 
+  saveUser = () => {
+    if (this.props.saveUser.nextStep === '下一步') {
+      this.child.validateUserForm().then(values => {
+        console.log(values);
+        this.props.changeState({
+          saveUser: { ...this.props.saveUser, nextStep: '确认', lastStep: '上一步' },
+          userInfo: values,
+        });
+      }).catch(error => {
+        console.log(error);
+      })
+    } else {
+      // 权限添加
+
+      // 保存
+
+      this.props.changeState({
+        saveUser: { ...this.props.saveUser, nextStep: '下一步', lastStep: '取消' },
+      });
+      this.setState({editUserVisible: false});
+    }
+
+  }
+  onRef = (ref) => {
+    this.child = ref
+  }
+  cancelUser = (flag) => {
+    console.log(flag);
+    if (flag) {
+      if (this.props.saveUser.lastStep === '上一步') {
+        this.props.changeState({
+          saveUser: { ...this.props.saveUser, nextStep: '下一步', lastStep: '取消' },
+        });
+      } else {
+        this.setState({editUserVisible: false});
+        this.props.changeState({
+          saveUser: { ...this.props.saveUser, nextStep: '下一步', lastStep: '取消' },
+        });
+      }
+    } else {
+      this.setState({editUserVisible: false});
+      this.props.changeState({
+        saveUser: { ...this.props.saveUser, nextStep: '下一步', lastStep: '取消' },
+      });
+    }
+  }
+
   deleteUserInfo = (event, userId) => {
     Modal.confirm({
       title: '确定是否删除？',
@@ -248,9 +296,12 @@ class App extends React.Component {
                  destroyOnClose={true}
                  maskClosable={false}
                  width={600}
-                 onCancel={() => { this.setState({editUserVisible: false}) }}
+                 onCancel={() => this.cancelUser(true)}
+                 onOk={this.saveUser}
+                 okText={this.props.saveUser.nextStep}
+                 cancelText={this.props.saveUser.lastStep}
           >
-            <EditUser />
+            <EditUser onRef={this.onRef} />
           </Modal>
         </div>
       </PageHeaderWrapper>

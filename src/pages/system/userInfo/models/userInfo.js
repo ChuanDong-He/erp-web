@@ -13,6 +13,14 @@ export default {
       userId: '',
       userName: '',
     },
+    saveUser: {
+      lastStep: '取消',
+      nextStep: '下一步',
+      isValid: false,
+      userForm: null,
+    },
+    userInfo: {},
+    roleInfos: [],
   },
 
   effects: {
@@ -28,6 +36,18 @@ export default {
           selectedUserIds: [],
           data: response.data.list,
           pagination: response.data.pagination,
+        },
+      });
+    },
+    *queryRoleInfos({}, { call, put }) {
+      const response = yield call(request.get, '/roleInfo/list');
+      if (response && response.status) {
+        return;
+      }
+      yield put({
+        type: 'changeState',
+        newState: {
+          roleInfos: response.data
         },
       });
     },
