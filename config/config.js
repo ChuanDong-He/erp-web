@@ -76,20 +76,18 @@ export default defineConfig({
                   icon: 'user',
                   component: './system/userInfo',
                   //authority: ['user'],
-                  routes: [
-                    {
-                      path: '/system/user_info/new_user',
-                      name: '新增用户',
-                      hideInMenu: 'true',
-                      component: './system/userInfo/EditUser',
-                    },
-                    {
-                      path: '/system/user_info/edit_user',
-                      name: '修改用户',
-                      hideInMenu: 'true',
-                      component: './system/userInfo/EditUser',
-                    }
-                  ]
+                },
+                {
+                  path: '/system/user_info/new_user',
+                  name: '新增用户',
+                  hideInMenu: 'true',
+                  component: './system/userInfo/EditUser',
+                },
+                {
+                  path: '/system/user_info/edit_user',
+                  name: '修改用户',
+                  hideInMenu: 'true',
+                  component: './system/userInfo/EditUser',
                 },
                 {
                   path: '/system/role_info',

@@ -4,7 +4,7 @@ import { Table, Button, Divider, Modal, Input, Form} from 'antd';
 import styles from '@/utils/default.less';
 import Search from './Search';
 import EditUser from "./EditUser";
-import { connect } from 'umi';
+import { connect, Link } from 'umi';
 import MD5 from 'crypto-js/md5';
 import {ExclamationCircleOutlined} from "@ant-design/icons";
 //import router from 'umi/router';
@@ -233,8 +233,9 @@ class App extends React.Component {
         <Search />
         <div>
           <div style={{ marginBottom: 8 }}>
-            <Button type="primary" onClick={() => { this.setState({editUserVisible: true}) }}>
-              新增
+
+            <Button type="primary">
+              <Link to="/system/user_info/new_user">新增</Link>
             </Button>
             <Button
               type="primary"
