@@ -247,6 +247,7 @@ class App extends React.Component {
                  visible={this.state.editUserVisible}
                  destroyOnClose={true}
                  maskClosable={false}
+                 width={600}
                  onCancel={() => { this.setState({editUserVisible: false}) }}
           >
             <EditUser />

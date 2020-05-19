@@ -116,6 +116,17 @@ class App extends React.Component{
     this.setState({roleId: roleId});
   }
 
+  handleTableChange = pagination => {
+    this.props.changeState({
+      pagination: { ...pagination },
+    });
+    this.props.queryRoleInfos({
+      pageSize: pagination.pageSize,
+      pageNum: pagination.current,
+      param: this.props.queryCondition,
+    });
+  };
+
   deleteRoleInfo = (event, roleId) => {
     Modal.confirm({
       title: '确定是否删除？',
