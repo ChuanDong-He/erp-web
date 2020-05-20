@@ -28,6 +28,11 @@ class UserPermission extends React.Component{
   constructor(props) {
     super(props);
   }
+
+  componentDidMount() {
+
+  }
+
   okHandle = () => {
     const attrs = [];
     this.props.attrPermissionInfos.forEach((item, i) => {

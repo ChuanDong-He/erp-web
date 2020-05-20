@@ -1,7 +1,6 @@
 @import '~antd/es/style/themes/default.less';
 
 .main {
-  width: 100%;
   background: @component-background;
   :global {
     .ant-pro-page-header-wrap-children-content {
@@ -32,4 +31,23 @@
       border-radius: 2px;
     }
   }
+}
+
+.advancedForm + div {
+  padding-bottom: 64px;
+}
+
+.advancedForm {
+  :global {
+    .ant-form .ant-row:last-child .ant-form-item {
+      margin-bottom: 24px;
+    }
+    .ant-table td {
+      transition: none !important;
+    }
+  }
+}
+
+.card {
+  margin-bottom: 24px;
 }
