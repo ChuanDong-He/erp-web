@@ -140,10 +140,10 @@ class EditUser extends Component {
                 </Col>
               </Form>
             </div>
-            <div style={{marginTop: 20, display: this.state.nextButton === '下一步' ? 'none' : ''}}>
+            <div style={{marginTop: 20, display: this.state.nextButton === '下一步' ? 'none' : '', textAlign: "center"}}>
               <UserPermission />
             </div>
-            <div style={{textAlign: "center", margin: '30 auto'}}>
+            <div style={{textAlign: "center", padding: '0 0 40px'}}>
               <Button style={{marginRight: 8}} onClick={() => this.pre()}>{this.state.preButton}</Button>
               <Button type="primary" onClick={() => this.next()}>{this.state.nextButton}</Button>
             </div>
