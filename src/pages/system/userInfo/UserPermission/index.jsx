@@ -33,6 +33,18 @@ class UserPermission extends React.Component{
 
   }
 
+  componentWillUnmount() {
+    this.props.changeState({
+      menuTreeInfos: [],
+      attrPermissionInfos: [],
+      roleMenuPermissionKeys: [],
+      queryCondition: {},
+      attrData: {},
+      operationData: {},
+      operationPermissionInfos: [],
+    });
+  }
+
   okHandle = () => {
     const attrs = [];
     this.props.attrPermissionInfos.forEach((item, i) => {
